@@ -23,7 +23,14 @@ function SignupPage() {
       alert('회원가입 성공!');
       navigate('/login'); // 로그인으로 페이지 이동
     } catch (err: any) {
-      alert('회원가입 실패: ' + (err.response?.data || err.message));
+      const errorData = err.response?.data;
+      const errorMessage =
+        errorData?.result?.description || // Api 구조인 경우
+        errorData?.message || // 일반적인 Spring 에러 구조인 경우
+        JSON.stringify(errorData) || // 구조를 모를 때 전체 출력
+        err.message; // 응답이 없을 때
+
+      alert('회원가입 실패: ' + errorMessage);
     }
   };
 
