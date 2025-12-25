@@ -8,3 +8,29 @@ export const store = configureStore({
     user: userReducer,
   },
 });
+
+// 용도:Redux store에 저장된 전체 상태의 구조를 TypeScript 타입으로 정의
+export type RootState = ReturnType<typeof store.getState>; // 전체 Redux 상태의 타입
+/*/
+     위 코드는 다음과 같음:
+    type RootState = {
+    user: UserState
+    }
+    
+    이걸 한 번더 풀어보면
+    type RootState = {
+        user: {
+            email: string | null;
+            role: string | null;
+            isAuthenticated: boolean;
+        }
+    }
+
+
+    그리고 
+      const { role, isAuthenticated } = useSelector(
+    (state: RootState) => state.user
+    );    
+
+    여기서 이거를 
+ */

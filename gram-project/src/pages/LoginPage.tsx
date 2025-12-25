@@ -1,8 +1,15 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { setUserFromToken } from '../store/UserSlice';
 
 function LoginPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // 사용자가 입력하는 이메일과 비밀번호를 저장하는 state
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -18,6 +25,10 @@ function LoginPage() {
         //서버가 Set-Cookie 헤더로 보내는 쿠키인 refreshtoken을 저장한다
         { withCredentials: true } // HttpOnly 쿠키 포함 ,쿠키를 포함한 인증 정보를 서버와 주고받을 수 있게 해주는 옵션
       );
+
+      // 서버에서 받아온 토큰을 decodeing한거다
+      // console.log(jwtDecode(res.data.body.accessToken));
+
       // 서버에서 받아온 accesstoken을 저장
       Cookies.set('accessToken', res.data.body.accessToken, {
         expires: 0.021, // 30분
@@ -25,6 +36,9 @@ function LoginPage() {
       });
       //   console.log('서버 응답 데이터:', res.data);
       //   alert('로그인 성공! Access Token: ' + res.data.body.accessToken);
+
+      dispatch(setUserFromToken(res.data.accessToken));
+      navigate('/');
     } catch (err: any) {
       const errorData = err.response?.data;
       const errorMessage =
